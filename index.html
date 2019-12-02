@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>1 - First Scene</title>
+	<link rel="stylesheet" href="style.css">
+	<script src="js/three.js"></script>
+</head>
+
+<body>
+</body>
+
+</html>
+
+<script>
+	let scene, camera, renderer;
+	let letter_E = new THREE.Group();
+	let bias = 0.01;
+
+	function draw_E() {
+		let geometry1 = new THREE.BoxGeometry(3, 1, 1);
+		let geometry2 = new THREE.BoxGeometry(1, 1, 1);
+		let material = new THREE.MeshBasicMaterial({ color: 0x00a1cb });
+
+		let obj1 = new THREE.Mesh(geometry1, material);
+		obj1.position.y = obj1.geometry.parameters.height / 2;
+
+		let obj2 = new THREE.Mesh(geometry1, material);
+		obj2.position.y = obj2.geometry.parameters.width + obj2.geometry.parameters.height + obj2.geometry.parameters.height / 2;
+
+		let obj3 = new THREE.Mesh(geometry1, material);
+		obj3.rotateZ(Math.PI / 2);
+		obj3.position.x = -obj3.geometry.parameters.width / 2 + obj3.geometry.parameters.height / 2;
+		obj3.position.y = obj3.geometry.parameters.width - obj3.geometry.parameters.height / 2;
+
+		let obj4 = new THREE.Mesh(geometry2, material);
+		//obj4.position.x = 1.5 * obj4.geometry.parameters.width;
+		obj4.position.y = obj4.geometry.parameters.width + obj3.geometry.parameters.width / 2;
+
+		letter_E.add(obj1, obj2, obj3, obj4);
+		scene.add(letter_E);
+	};
+
+
+	//let E_letter = draw_E();
+	//console.log(E_letter.geometry.position.y);
+
+	// set up the environment - 
+	// initiallize scene, camera, objects and renderer
+	let init = function () {
+		// create the scene
+		scene = new THREE.Scene();
+		scene.background = new THREE.Color(0x6699ff);
+
+		// create an locate the camera
+
+		camera = new THREE.PerspectiveCamera(30,
+			window.innerWidth / window.innerHeight,
+			1, 1000);
+		camera.position.x = 5;
+		camera.position.y = 3;
+		camera.position.z = 20;
+
+		let axes = new THREE.AxesHelper(5);
+		scene.add(axes);
+
+		draw_E();
+
+		// create the renderer   
+		renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+
+		document.body.appendChild(renderer.domElement);
+	}
+
+	// main animation loop - calls 50-60 in a second.
+	let mainLoop = function () {
+		letter_E.position.x += bias;
+		letter_E.rotation.y += 0.01;
+
+
+		if (letter_E.position.x <= -3 || letter_E.position.x >= 3)
+			bias *= -1;		
+
+			renderer.render(scene, camera);
+		requestAnimationFrame(mainLoop);
+	};
+
+
+	///////////////////////////////////////////////
+	init();
+	mainLoop();
+
+</script>
